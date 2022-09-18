@@ -12,10 +12,12 @@ namespace SwapiMVC.Controllers
     public class PeopleController : Controller
     {
         private readonly ILogger<PeopleController> _logger;
+        private readonly HttpClient _httpClient;
 
-        public PeopleController(ILogger<PeopleController> logger)
+        public PeopleController(ILogger<PeopleController> logger, IHttpClientFactory httpClientFactory)
         {
             _logger = logger;
+            _httpClient = httpClientFactory.CreateClient("swapi");
         }
 
         public IActionResult Index()
