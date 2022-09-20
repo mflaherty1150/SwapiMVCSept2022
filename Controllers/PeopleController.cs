@@ -22,6 +22,7 @@ namespace SwapiMVC.Controllers
             _httpClient = httpClientFactory.CreateClient("swapi");
         }
 
+        [Route("Index")]
         public async Task<IActionResult> Index(string page)
         {
             string route = $"people?page={page ?? "1"}";
@@ -31,6 +32,18 @@ namespace SwapiMVC.Controllers
             var people = JsonSerializer.Deserialize<ResultsViewModel<PeopleViewModel>>(responseString);
 
             return View(people);
+        }
+
+        [Route("Person")]
+        public async Task<IActionResult> Person(string id)
+        {
+            var response = await _httpClient.GetAsync($"people/{id}");
+            if (id is null || response.IsSuccessStatusCode == false)
+                return RedirectToAction(nameof(Index));
+
+            var responseString = await response.Content.ReadAsByteArrayAsync();
+            var person = JsonSerializer.Deserialize<PeopleViewModel>(responseString);
+            return View(person);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
